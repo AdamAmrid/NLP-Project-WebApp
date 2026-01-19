@@ -312,7 +312,7 @@ def extract_text_from_pdf(uploaded_file):
     return text
 
 # Main App Layout
-st.markdown('<div class="hero-title">🚀 Tawjih.ai</div>', unsafe_allow_html=True)
+st.markdown('<div class="hero-title">Tawjih.ai</div>', unsafe_allow_html=True)
 st.markdown('<div class="hero-subtitle">Match your profile with your dream career using advanced AI analysis.</div>', unsafe_allow_html=True)
 
 # Spacing using columns effectively centered
@@ -328,7 +328,6 @@ with col_main:
         
         if uploaded_file:
              st.success("Analysis Complete")
-             st.balloons() # 🎉 Added Balloons Animation
              text = extract_text_from_pdf(uploaded_file)
 
         st.markdown("""
@@ -400,6 +399,7 @@ if uploaded_file:
                 print("="*50)
 
                 with col2:
+                    st.balloons() # 🎉 Balloons now launch with results
                     st.markdown("### 🎯 Best Matched Opportunities")
                     for i, (idx, score) in enumerate(top_results[:5]):
                         job = jobs.iloc[idx]
