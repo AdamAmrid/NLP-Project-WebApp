@@ -142,30 +142,34 @@ def inject_custom_css():
             margin-bottom: 10px !important;
         }
 
-        /* Job Card Design - Expandable */
+        /* Job Card Design - Expandable (Zero Gravity) */
         details.job-card {
-            background: rgba(30, 41, 59, 0.6);
+            background: rgba(15, 23, 42, 0.6); /* Darker translucent */
             border-radius: 16px;
-            margin-bottom: 20px;
-            border: 1px solid var(--glass-border);
-            backdrop-filter: blur(12px);
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            animation: slideIn 0.5s ease-out forwards;
+            margin-bottom: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(16px);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Bouncy float */
+            animation: slideIn 0.6s ease-out forwards;
             overflow: hidden;
+            position: relative;
         }
 
+        /* Hover Lift + Blue Blur Glow */
         details.job-card:hover {
-            transform: translateY(-4px);
+            transform: translateY(-8px) scale(1.01);
+            border-color: rgba(96, 165, 250, 0.5);
+            box-shadow: 
+                0 20px 40px -5px rgba(0, 0, 0, 0.4),
+                0 0 20px rgba(59, 130, 246, 0.3); /* Blue Blur */
             background: rgba(30, 41, 59, 0.8);
-            border-color: rgba(96, 165, 250, 0.4);
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2);
         }
 
         details.job-card[open] {
-            background: rgba(30, 41, 59, 0.95);
-            border-color: rgba(96, 165, 250, 0.6);
-            transform: scale(1.01);
+            background: rgba(15, 23, 42, 0.9);
+            border-color: rgba(96, 165, 250, 0.7);
+            box-shadow: 0 0 30px rgba(59, 130, 246, 0.15);
         }
 
         summary {
@@ -184,15 +188,15 @@ def inject_custom_css():
             color: #cbd5e1;
             font-size: 0.95rem;
             line-height: 1.6;
-            border-top: 1px solid rgba(255,255,255,0.1);
+            border-top: 1px solid rgba(255,255,255,0.05);
             margin-top: 0;
             padding-top: 20px;
-            animation: fadeIn 0.3s ease-in;
+            animation: fadeIn 0.4s ease-in;
         }
         
         @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         /* Score Badge */
@@ -206,12 +210,14 @@ def inject_custom_css():
             border-radius: 12px;
             padding: 10px 16px;
             min-width: 80px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
         }
 
         .score-value {
             font-size: 1.25rem;
             font-weight: 700;
             color: #34d399;
+            text-shadow: 0 0 10px rgba(52, 211, 153, 0.3);
         }
 
         .score-label {
@@ -233,6 +239,11 @@ def inject_custom_css():
             background: rgba(255, 255, 255, 0.05);
             color: #e2e8f0;
             border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: background 0.2s;
+        }
+
+        .meta-chip:hover {
+            background: rgba(255, 255, 255, 0.1);
         }
         
         .meta-chip.location { background: rgba(59, 130, 246, 0.1); color: #60a5fa; border-color: rgba(59, 130, 246, 0.2); }
@@ -240,7 +251,7 @@ def inject_custom_css():
 
         /* Animation Keyframes */
         @keyframes slideIn {
-            from { opacity: 0; transform: translateY(20px); }
+            from { opacity: 0; transform: translateY(30px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
@@ -301,7 +312,7 @@ def extract_text_from_pdf(uploaded_file):
     return text
 
 # Main App Layout
-st.markdown('<div class="hero-title">Tawjih.ai</div>', unsafe_allow_html=True)
+st.markdown('<div class="hero-title">🚀 Tawjih.ai</div>', unsafe_allow_html=True)
 st.markdown('<div class="hero-subtitle">Match your profile with your dream career using advanced AI analysis.</div>', unsafe_allow_html=True)
 
 # Spacing using columns effectively centered
@@ -317,6 +328,7 @@ with col_main:
         
         if uploaded_file:
              st.success("Analysis Complete")
+             st.balloons() # 🎉 Added Balloons Animation
              text = extract_text_from_pdf(uploaded_file)
 
         st.markdown("""
