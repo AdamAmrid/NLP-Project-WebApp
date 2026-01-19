@@ -12,7 +12,7 @@ def inject_custom_css():
     st.markdown("""
         <style>
         /* Import Fonts */
-        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
 
         /* Root Variables */
         :root {
@@ -39,88 +39,107 @@ def inject_custom_css():
             font-family: 'Plus Jakarta Sans', sans-serif !important;
         }
 
-        /* Hero Title */
+        /* Animated Hero Title */
+        @keyframes shimmer {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
         .hero-title {
-            background: linear-gradient(135deg, #60a5fa 0%, #c084fc 100%);
+            background: linear-gradient(270deg, #60a5fa, #c084fc, #3b82f6);
+            background-size: 200% 200%;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             font-weight: 800;
-            font-size: 3.5rem;
-            letter-spacing: -1px;
-            margin-bottom: 10px;
+            font-size: 4rem;
+            letter-spacing: -1.5px;
+            margin-bottom: 8px;
+            text-align: center;
+            animation: shimmer 6s ease infinite;
         }
 
         .hero-subtitle {
-            font-size: 1.1rem;
+            font-size: 1.2rem;
             color: var(--text-secondary);
-            margin-bottom: 40px;
+            margin-bottom: 50px;
             font-weight: 500;
+            text-align: center;
         }
 
-        /* File Uploader Container */
-        .upload-container {
+        /* UNIFIED File Uploader Styling */
+        /* This targets the main uploader container provided by Streamlit */
+        [data-testid='stFileUploader'] {
             background: var(--glass-bg);
             border: 1px solid var(--glass-border);
             border-radius: 20px;
             padding: 30px;
-            text-align: center;
             backdrop-filter: blur(12px);
-            transition: transform 0.3s ease;
-        }
-        
-        .upload-container:hover {
-            border-color: rgba(96, 165, 250, 0.3);
+            transition: all 0.3s ease;
+            text-align: center;
         }
 
-        /* Streamlit File Uploader Fix */
-        [data-testid='stFileUploader'] {
-            width: 100%;
+        [data-testid='stFileUploader']:hover {
+            border-color: rgba(96, 165, 250, 0.4);
+            box-shadow: 0 10px 30px -10px rgba(59, 130, 246, 0.2);
+            transform: translateY(-2px);
         }
-        
+
+        /* The inner dropzone section */
         [data-testid='stFileUploader'] section {
-            padding: 2px;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px dashed rgba(255, 255, 255, 0.2);
-            border-radius: 12px;
+            padding: 40px 20px !important;
+            background: rgba(255, 255, 255, 0.03) !important;
+            border: 2px dashed rgba(255, 255, 255, 0.15) !important;
+            border-radius: 12px !important;
+            min-height: 200px !important;
+            display: flex !important;
+            flex-direction: column !important;
+            align-items: center !important;
+            justify-content: center !important;
+        }
+        
+        [data-testid='stFileUploader'] section:hover {
+            background: rgba(255, 255, 255, 0.05) !important;
+            border-color: #60a5fa !important;
         }
 
-        /* The Button itself */
+        /* The "Browse files" button */
         [data-testid='stFileUploader'] section button {
             background: linear-gradient(90deg, #3b82f6 0%, #8b5cf6 100%) !important;
             color: white !important;
             border: none !important;
             border-radius: 8px !important;
-            padding: 8px 16px !important;
-            font-weight: 600 !important;
+            padding: 10px 24px !important;
+            font-weight: 700 !important;
+            font-size: 1rem !important;
+            margin-top: 15px !important;
             transition: all 0.3s ease !important;
-            opacity: 1 !important;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1) !important;
         }
 
         [data-testid='stFileUploader'] section button:hover {
             transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
-            opacity: 0.9 !important;
+            box-shadow: 0 8px 15px rgba(59, 130, 246, 0.4) !important;
         }
 
-        /* The 'Drag and drop' text and icon color */
-        [data-testid='stFileUploader'] {
-            color: #f8fafc !important;
-        }
-
-        /* Target the specific spans inside the uploader */
+        /* Text inside Dropzone */
         [data-testid='stFileUploader'] section span {
-            color: #f8fafc !important;
-            font-weight: 600 !important;
+            font-size: 1rem !important;
+            color: #cbd5e1 !important;
         }
-
+        
         [data-testid='stFileUploader'] section small {
+            font-size: 0.85rem !important;
             color: #94a3b8 !important;
-            opacity: 1 !important;
+            margin-bottom: 10px !important;
         }
 
+        /* Icons */
         [data-testid='stFileUploader'] svg {
+            width: 40px !important;
+            height: 40px !important;
             fill: #60a5fa !important;
-            color: #60a5fa !important;
+            margin-bottom: 10px !important;
         }
 
         /* Job Card Design - Expandable */
@@ -243,8 +262,9 @@ def inject_custom_css():
         
         /* Remove default Streamlit branding spacing */
         .block-container {
-            padding-top: 2rem;
+            padding-top: 3rem;
             padding-bottom: 2rem;
+            max-width: 1200px;
         }
         </style>
     """, unsafe_allow_html=True)
@@ -281,34 +301,30 @@ def extract_text_from_pdf(uploaded_file):
     return text
 
 # Main App Layout
-col_header, col_void = st.columns([2, 1])
-with col_header:
-    st.markdown('<div class="hero-title">Tawjih.ai</div>', unsafe_allow_html=True)
-    st.markdown('<div class="hero-subtitle">Match your profile with your dream career using advanced AI analysis.</div>', unsafe_allow_html=True)
+st.markdown('<div class="hero-title">Tawjih.ai</div>', unsafe_allow_html=True)
+st.markdown('<div class="hero-subtitle">Match your profile with your dream career using advanced AI analysis.</div>', unsafe_allow_html=True)
 
-col1, col2 = st.columns([1, 1.8], gap="large")
+# Spacing using columns effectively centered
+col_void_l, col_main, col_void_r = st.columns([1, 10, 1])
 
-with col1:
-    st.markdown("""
-        <div class="upload-container">
-            <h3 style="margin-top:0;">📂 Profile Upload</h3>
-            <p style="color: #94a3b8; font-size: 0.9rem;">Upload your CV (PDF) to begin.</p>
+with col_main:
+    col1, col2 = st.columns([1, 1.5], gap="large")
+
+    with col1:
+        # File Uploader with integrated label in a card-like wrapper purely via CSS now
+        st.markdown('<h3 style="margin-bottom: 10px; color: #f8fafc; font-size: 1.2rem;">📂 Profile Upload</h3>', unsafe_allow_html=True)
+        uploaded_file = st.file_uploader("Upload CV", type="pdf", label_visibility="collapsed")
+        
+        if uploaded_file:
+             st.success("Analysis Complete")
+             text = extract_text_from_pdf(uploaded_file)
+
+        st.markdown("""
+        <div style="margin-top: 20px; padding: 20px; background: rgba(59, 130, 246, 0.05); border-radius: 12px; border: 1px solid rgba(59, 130, 246, 0.1);">
+            <h4 style="margin:0; font-size: 1rem; color: #60a5fa;">💡 Pro Tip</h4>
+            <p style="font-size: 0.85rem; color: #94a3b8; margin: 5px 0 0 0;">Ensure your PDF is text-selectable for best results.</p>
         </div>
-    """, unsafe_allow_html=True)
-    
-    uploaded_file = st.file_uploader("Upload CV", type="pdf", label_visibility="collapsed")
-    
-    if uploaded_file:
-         st.success("Analysis Complete")
-         text = extract_text_from_pdf(uploaded_file)
-         # Debug expander removed as requested
-
-    st.markdown("""
-    <div style="margin-top: 20px; padding: 20px; background: rgba(59, 130, 246, 0.05); border-radius: 12px; border: 1px solid rgba(59, 130, 246, 0.1);">
-        <h4 style="margin:0; font-size: 1rem; color: #60a5fa;">💡 Pro Tip</h4>
-        <p style="font-size: 0.85rem; color: #94a3b8; margin: 5px 0 0 0;">Ensure your PDF is text-selectable for best results.</p>
-    </div>
-    """, unsafe_allow_html=True)
+        """, unsafe_allow_html=True)
 
 import re
 
