@@ -409,7 +409,8 @@ if uploaded_file:
                 # Validation Step
                 is_valid, message = is_valid_resume(text)
                 if not is_valid:
-                    st.error(f"❌ Validation Failed: {message}")
+                    st.toast(f"❌ Validation Failed: {message}", icon="❌")
+                    time.sleep(1) # Allow toast to appear
                     st.stop()
                 
                 st.success("✅ Valid Resume Detected")
