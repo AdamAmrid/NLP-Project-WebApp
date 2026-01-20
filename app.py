@@ -3,6 +3,7 @@ import pandas as pd
 import pdfplumber
 from sentence_transformers import SentenceTransformer, util
 import time
+import re
 
 # Page Config
 st.set_page_config(page_title="Tawjih.ai", page_icon="🔮", layout="wide")
@@ -331,13 +332,41 @@ with col_main:
              text = extract_text_from_pdf(uploaded_file)
 
         st.markdown("""
+
         <div style="margin-top: 20px; padding: 20px; background: rgba(59, 130, 246, 0.05); border-radius: 12px; border: 1px solid rgba(59, 130, 246, 0.1);">
             <h4 style="margin:0; font-size: 1rem; color: #60a5fa;">💡 Pro Tip</h4>
             <p style="font-size: 0.85rem; color: #94a3b8; margin: 5px 0 0 0;">Ensure your PDF is text-selectable for best results.</p>
-        </div>
-        """, unsafe_allow_html=True)
+        </div>        """, unsafe_allow_html=True)
 
-import re
+def is_valid_resume(text):
+    """
+    Validates if the text looks like a resume.
+    Returns: (bool, message)
+    """
+    # 1. Length Check
+    word_count = len(text.split())
+    if word_count < 50:
+        return False, "Document is too short to be a valid resume (less than 50 words)."
+    if word_count > 4000:
+        return False, "Document is too long to be a valid resume (more than 4000 words)."
+
+    # 2. Email Check
+    email_pattern = r'[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}'
+    if not re.search(email_pattern, text):
+        return False, "No valid email address found in the document."
+
+    # 3. Keyword Check
+    # Case-insensitive keywords
+    required_keywords = ['education', 'experience', 'skills', 'projects', 'summary', 
+                         'formation', 'compétences', 'profil', 'langues']
+    
+    text_lower = text.lower()
+    matches = sum(1 for keyword in required_keywords if keyword in text_lower)
+    
+    if matches < 2:
+        return False, f"Document missing common resume keywords. Found {matches}, require nearly 2."
+
+    return True, "Valid"
 
 # Tech Keywords for Skills Analysis
 TECH_KEYWORDS = {
@@ -370,12 +399,21 @@ def extract_skills(text):
              found_skills.add(skill)
     return found_skills
 
+
 if uploaded_file:
     with st.spinner("Finding your best matches..."):
         try:
             if not text.strip():
                 st.error("Could not extract text. Please ensure the PDF contains selectable text.")
             else:
+                # Validation Step
+                is_valid, message = is_valid_resume(text)
+                if not is_valid:
+                    st.error(f"❌ Validation Failed: {message}")
+                    st.stop()
+                
+                st.success("✅ Valid Resume Detected")
+                
                 model = load_model()
                 jobs = load_data()
                 
